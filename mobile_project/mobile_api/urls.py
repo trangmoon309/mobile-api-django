@@ -29,6 +29,12 @@ urlpatterns = [
    path('users', views.UserAPIView.as_view()),   
    path('users/sign-up', views.SignUpAPIView.as_view()),   
    path('users/log-in', views.LoginAPIView.as_view()),
+   path('categories', views.CategoryAPIView.as_view()),
+   path('foods/', views.FoodAPIView.as_view()),   
+   path('reviews/', views.ReviewAPIView.as_view()),
+   path('ingredients/', views.IngredientAPIView.as_view()),
+   path('food-ingredients/', views.FoodIngredientAPIView.as_view()),
+   path('user-fav-foods/', views.UserFavoriteFoodAPIView.as_view()),
    path('doc', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
