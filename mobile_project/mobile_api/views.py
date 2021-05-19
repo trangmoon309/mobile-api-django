@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, response
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.decorators import api_view, action
@@ -71,31 +71,31 @@ class CategoryAPIView(generics.GenericAPIView):
     throttle_scope = "categories_app"
     def post(self, request, *args, **kwargs):
         category_data = request.data
-
-        checkExistName = User.objects.get(name=category_data["name"])
-        if checkExistName:
-            return HttpResponse("This category has existed!", status=404)
-        else:
-            id = uuid.uuid4()
-            new_category = Category.objects.create(id=id, name=category_data["name"])
-            new_category.save()
-            serializer = serializers.CategorySerializer(new_category)
-            return Response(serializer.data)
+        id = uuid.uuid4()
+        new_category = Category.objects.create(id=id, name=category_data["name"])
+        new_category.save()
+        serializer = serializers.CategorySerializer(new_category)
+        return Response(serializer.data)
 
 class FoodAPIView(generics.GenericAPIView):
-    serializer_class = serializers.FoodSerializer
+    serializer_class = serializers.FoodRequestSerializer
     throttle_scope = "foods_app"
     def post(self, request, *args, **kwargs):
         food_data = request.data
         id = uuid.uuid4()
         category = Category.objects.get(id = food_data["category_id"])
-        new_food = Food.objects.create(id=id, name = food_data["name"], calorie = food_data["calorie"], potion = food_data["potion"], level = food_data["level"], star_level = food_data["star_level"], prepare = food_data["prepare"], youtube_url = food_data["youtube_url"], category=category)
+        new_food = Food.objects.create(id=id, name = food_data["name"], clorie = food_data["clorie"], potion = food_data["potion"], level = food_data["level"], star_level = food_data["star_level"], prepare = food_data["prepare"], youtube_url = food_data["youtube_url"], category=category)
         new_food.save()
-        serializer = serializers.FoodSerializer(new_food)
+        serializer = serializers.FoodResponseSerializer(new_food)
         return Response(serializer.data)
 
+    def get(self, request):
+        foods = Food.objects.all()
+        serializer = serializers.FoodResponseSerializer(foods, many=True)
+        return Response(serializer.data)    
+
 class ReviewAPIView(generics.GenericAPIView):
-    serializer_class = serializers.ReviewSerializer
+    serializer_class = serializers.ReviewRequestSerializer
     throttle_scope = "reviews_app"
     def post(self, request, *args, **kwargs):
         review_data = request.data
@@ -103,11 +103,16 @@ class ReviewAPIView(generics.GenericAPIView):
         food = Food.objects.get(id = review_data["food_id"])
         new_review = Review.objects.create(id=id, content=review_data["content"], food = food)
         new_review.save()
-        serializer = serializers.ReviewSerializer(new_review)
+        serializer = serializers.ReviewResponseSerializer(new_review)
         return Response(serializer.data)
 
+    def get(self, request):
+        reviews = Review.objects.all()
+        serializer = serializers.ReviewResponseSerializer(reviews, many=True)
+        return Response(serializer.data)  
+
 class UserFavoriteFoodAPIView(generics.GenericAPIView):
-    serializer_class = serializers.UserFavoriteFoodSerializer
+    serializer_class = serializers.UserFavoriteFoodRequestSerializer
     throttle_scope = "favorites_food_app"
     def post(self, request, *args, **kwargs):
         data = request.data
@@ -116,8 +121,13 @@ class UserFavoriteFoodAPIView(generics.GenericAPIView):
         user = User.objects.get(id = data["user_id"])
         new_fav = UserFavoriteFood.objects.create(id=id, food = food, user=user)
         new_fav.save()
-        serializer = serializers.UserFavoriteFoodSerializer(new_fav)
+        serializer = serializers.UserFavoriteFoodResponseSerializer(new_fav)
         return Response(serializer.data)
+
+    def get(self, request):
+        fav_foods = UserFavoriteFood.objects.all()
+        serializer = serializers.UserFavoriteFoodResponseSerializer(fav_foods, many=True)
+        return Response(serializer.data)  
 
 class IngredientAPIView(generics.GenericAPIView):
     serializer_class = serializers.IngredientSerializer
@@ -130,8 +140,13 @@ class IngredientAPIView(generics.GenericAPIView):
         serializer = serializers.IngredientSerializer(new_ingredient)
         return Response(serializer.data)
 
+    def get(self, request):
+        ingredients = Ingredient.objects.all()
+        serializer = serializers.IngredientSerializer(ingredients, many=True)
+        return Response(serializer.data)  
+
 class FoodIngredientAPIView(generics.GenericAPIView):
-    serializer_class = serializers.FoodIngredientSerializer
+    serializer_class = serializers.FoodIngredientRequestSerializer
     throttle_scope = "food_ingredient_app"
     def post(self, request, *args, **kwargs):
         data = request.data
@@ -140,5 +155,26 @@ class FoodIngredientAPIView(generics.GenericAPIView):
         ingredient = Ingredient.objects.get(id = data["ingredient_id"])
         new_food_ingredient = FoodIngredient.objects.create(id=id, food = food, ingredient = ingredient, quantity = data["quantity"])
         new_food_ingredient.save()
-        serializer = serializers.FoodIngredientSerializer(new_food_ingredient)
+        serializer = serializers.FoodIngredientResponseSerializer(new_food_ingredient)
         return Response(serializer.data)
+
+class FoodByIngredientAPIView(generics.GenericAPIView):
+    ingredient_id_param = openapi.Parameter('ingredient_id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    throttle_scope = "foods_app"
+    @swagger_auto_schema(manual_parameters=[ingredient_id_param],operation_summary="Get danh sách món ăn dựa vào nguyên liệu")
+    def get(self, request):
+        foods = Food.objects.all()
+        food_ingredients = FoodIngredient.objects.all()
+        food_ids = []
+        responses = []
+        ingredient_id = request.query_params["ingredient_id"]
+        for item in food_ingredients:
+            if str(item.ingredient_id) == ingredient_id:
+                food_ids.append(str(item.food_id))
+
+        for item in foods:
+            if str(item.id) in food_ids:
+                responseItem = serializers.FoodSerializer(item).data
+                responses.append(responseItem)
+                
+        return Response(responses)  
