@@ -84,13 +84,13 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': '13.228.21.39',
+        'NAME': 'mobile_final',
 
         'USER': 'postgres',
 
         'PASSWORD': 'Pass#word1',
 
-        'HOST': '127.0.0.1',
+        'HOST': '13.228.21.39',
 
         'PORT': '5432',
 
