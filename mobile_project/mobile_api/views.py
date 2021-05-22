@@ -83,16 +83,44 @@ class FoodAPIView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         food_data = request.data
         id = uuid.uuid4()
+
+        # Lay phan loai
         category = Category.objects.get(id = food_data["category_id"])
+
+        # Tao thuc an moi
         new_food = Food.objects.create(id=id, name = food_data["name"], clorie = food_data["clorie"], potion = food_data["potion"], level = food_data["level"], star_level = food_data["star_level"], prepare = food_data["prepare"], youtube_url = food_data["youtube_url"], category=category)
         new_food.save()
+
+        # Tao bang trung gian food-ingredient
+        ingredients = food_data["ingredients"]
+        ingredient_responses = []
+        for ingredient in ingredients:
+            added_ingredient = Ingredient.objects.get(id=ingredient['ingredient_id'])
+            new_food_ingredient = FoodIngredient.objects.create(id=id, food = new_food, ingredient = added_ingredient, quantity = ingredient['quantity'])
+            new_food_ingredient.save()
+            ingredient_serializer = serializers.FoodIngredientResponseSerializer(new_food_ingredient)
+            ingredient_responses.append(ingredient_serializer.data)
+
         serializer = serializers.FoodResponseSerializer(new_food)
-        return Response(serializer.data)
+        response = serializer.data
+        response['ingredients'] = ingredient_responses
+        return Response(response)
 
     def get(self, request):
         foods = Food.objects.all()
-        serializer = serializers.FoodResponseSerializer(foods, many=True)
-        return Response(serializer.data)    
+        response = []
+        for food in foods:
+            ingredient_responses = []
+            food_ingredients = FoodIngredient.objects.filter(food = food)
+            for ingredient in food_ingredients:
+                ingredient_serializer = serializers.FoodIngredientResponseSerializer(ingredient)
+                ingredient_responses.append(ingredient_serializer.data)
+            food_serializer = serializers.FoodResponseSerializer(food)
+            response_item = food_serializer.data
+            response_item['ingredients'] = ingredient_responses
+            response.append(response_item)
+
+        return Response(response)    
 
 class ReviewAPIView(generics.GenericAPIView):
     serializer_class = serializers.ReviewRequestSerializer
@@ -145,19 +173,6 @@ class IngredientAPIView(generics.GenericAPIView):
         serializer = serializers.IngredientSerializer(ingredients, many=True)
         return Response(serializer.data)  
 
-class FoodIngredientAPIView(generics.GenericAPIView):
-    serializer_class = serializers.FoodIngredientRequestSerializer
-    throttle_scope = "food_ingredient_app"
-    def post(self, request, *args, **kwargs):
-        data = request.data
-        id = uuid.uuid4()
-        food = Food.objects.get(id = data["food_id"])
-        ingredient = Ingredient.objects.get(id = data["ingredient_id"])
-        new_food_ingredient = FoodIngredient.objects.create(id=id, food = food, ingredient = ingredient, quantity = data["quantity"])
-        new_food_ingredient.save()
-        serializer = serializers.FoodIngredientResponseSerializer(new_food_ingredient)
-        return Response(serializer.data)
-
 class FoodByIngredientAPIView(generics.GenericAPIView):
     ingredient_id_param = openapi.Parameter('ingredient_id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
     throttle_scope = "foods_app"
@@ -172,9 +187,33 @@ class FoodByIngredientAPIView(generics.GenericAPIView):
             if str(item.ingredient_id) == ingredient_id:
                 food_ids.append(str(item.food_id))
 
-        for item in foods:
-            if str(item.id) in food_ids:
-                responseItem = serializers.FoodSerializer(item).data
-                responses.append(responseItem)
+        for food in foods:
+            ingredient_responses = []
+            food_ingredients = FoodIngredient.objects.filter(food = food)
+            for ingredient in food_ingredients:
+                ingredient_serializer = serializers.FoodIngredientResponseSerializer(ingredient)
+                ingredient_responses.append(ingredient_serializer.data)
+            food_serializer = serializers.FoodResponseSerializer(food)
+            response_item = food_serializer.data
+            response_item['ingredients'] = ingredient_responses
+            responses.append(response_item)
                 
         return Response(responses)  
+
+
+
+
+# Bang trung gian
+
+# class FoodIngredientAPIView(generics.GenericAPIView):
+#     serializer_class = serializers.FoodIngredientRequestSerializer
+#     throttle_scope = "food_ingredient_app"
+#     def post(self, request, *args, **kwargs):
+#         data = request.data
+#         id = uuid.uuid4()
+#         food = Food.objects.get(id = data["food_id"])
+#         ingredient = Ingredient.objects.get(id = data["ingredient_id"])
+#         new_food_ingredient = FoodIngredient.objects.create(id=id, food = food, ingredient = ingredient, quantity = data["quantity"])
+#         new_food_ingredient.save()
+#         serializer = serializers.FoodIngredientResponseSerializer(new_food_ingredient)
+#         return Response(serializer.data)

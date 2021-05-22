@@ -25,6 +25,28 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('__all__')
 
+class IngredientSerializer(serializers.ModelSerializer):
+    name = serializers.CharField()
+    class Meta:
+        model = Ingredient
+        fields = ('__all__')
+
+class FoodIngredientRequestSerializer(serializers.ModelSerializer):
+    #food_id = serializers.UUIDField()
+    ingredient_id = serializers.UUIDField()
+    quantity = serializers.IntegerField()
+    class Meta:
+        model = FoodIngredient
+        fields = ('ingredient_id', 'quantity')
+
+class FoodIngredientResponseSerializer(serializers.ModelSerializer):
+    quantity = serializers.IntegerField()
+    ingredient = IngredientSerializer(many=False)
+    class Meta:
+        model = FoodIngredient
+        fields = ('ingredient','quantity')
+        depth = 1
+
 class FoodRequestSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=50)
     clorie = serializers.IntegerField()
@@ -34,9 +56,10 @@ class FoodRequestSerializer(serializers.ModelSerializer):
     prepare = serializers.CharField()
     youtube_url = serializers.CharField(max_length=500)
     category_id = serializers.UUIDField()
+    ingredients = FoodIngredientRequestSerializer(many=True)
     class Meta:
         model = Food
-        fields = ('name','clorie','potion','level','star_level','prepare','youtube_url','category_id')
+        fields = ('__all__')
 
 class FoodResponseSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=50)
@@ -64,30 +87,6 @@ class ReviewResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ('__all__')
-
-class FoodIngredientRequestSerializer(serializers.ModelSerializer):
-    food_id = serializers.UUIDField()
-    ingredient_id = serializers.UUIDField()
-    quantity = serializers.IntegerField()
-    class Meta:
-        model = FoodIngredient
-        fields = ('food_id', 'ingredient_id', 'quantity')
-
-class IngredientSerializer(serializers.ModelSerializer):
-    name = serializers.CharField()
-    class Meta:
-        model = Ingredient
-        fields = ('__all__')
-
-
-class FoodIngredientResponseSerializer(serializers.ModelSerializer):
-    quantity = serializers.IntegerField()
-    food = FoodResponseSerializer(many=False)
-    ingredient = IngredientSerializer(many=False)
-    class Meta:
-        model = FoodIngredient
-        fields = ('__all__')
-        depth = 1
 
 class UserFavoriteFoodRequestSerializer(serializers.ModelSerializer):
     food_id = serializers.UUIDField()
