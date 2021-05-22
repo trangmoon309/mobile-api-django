@@ -84,11 +84,11 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': 'mobile_final',
+        'NAME': '13.228.21.39',
 
         'USER': 'postgres',
 
-        'PASSWORD': 'abc123!@#',
+        'PASSWORD': 'Pass#word1',
 
         'HOST': '127.0.0.1',
 
