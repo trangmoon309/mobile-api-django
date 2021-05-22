@@ -120,7 +120,8 @@ class FoodAPIView(generics.GenericAPIView):
             response_item['ingredients'] = ingredient_responses
             response.append(response_item)
 
-        return Response(response)    
+        return Response(response)
+
 
 class ReviewAPIView(generics.GenericAPIView):
     serializer_class = serializers.ReviewRequestSerializer

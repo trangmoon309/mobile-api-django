@@ -62,7 +62,7 @@ class Ingredient(models.Model):
 #FoodIngredient
 class FoodIngredient(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    quantity = models.IntegerField()
+    quantity = models.CharField(max_length=50)
     food = models.ForeignKey(Food, on_delete = models.CASCADE, null=True)
     ingredient = models.ForeignKey(Ingredient, on_delete = models.CASCADE, null=True)
     def __str__(self):

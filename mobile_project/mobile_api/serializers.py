@@ -34,13 +34,13 @@ class IngredientSerializer(serializers.ModelSerializer):
 class FoodIngredientRequestSerializer(serializers.ModelSerializer):
     #food_id = serializers.UUIDField()
     ingredient_id = serializers.UUIDField()
-    quantity = serializers.IntegerField()
+    quantity = serializers.CharField(max_length=50)
     class Meta:
         model = FoodIngredient
         fields = ('ingredient_id', 'quantity')
 
 class FoodIngredientResponseSerializer(serializers.ModelSerializer):
-    quantity = serializers.IntegerField()
+    quantity = serializers.CharField(max_length=50)
     ingredient = IngredientSerializer(many=False)
     class Meta:
         model = FoodIngredient
