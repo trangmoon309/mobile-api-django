@@ -29,6 +29,25 @@ class UserAPIView(generics.GenericAPIView):
         serializer = serializers.UserSerializer(users, many=True)
         return Response(serializer.data)
 
+    id_param = openapi.Parameter('id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[id_param])
+    def delete(self, request, *args, **kwargs):
+        User.objects.filter(id = request.query_params["id"]).delete()
+        return Response("Success!")
+
+    id_param = openapi.Parameter('id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[id_param])
+    def put(self, request, *args, **kwargs):
+        user_data = request.data
+        updated_user = User.objects.get(id = request.query_params["id"])
+        updated_user.full_name = user_data["full_name"]
+        updated_user.user_name = user_data["user_name"]
+        updated_user.email = user_data["email"]
+        updated_user.password = user_data["password"]
+        updated_user.save()
+        serializer = serializers.UserSerializer(updated_user)
+        return Response(serializer.data)       
+
 class SignUpAPIView(generics.GenericAPIView):
     serializer_class = serializers.UserSerializer
     throttle_scope = "users_app"
@@ -77,6 +96,12 @@ class CategoryAPIView(generics.GenericAPIView):
         serializer = serializers.CategorySerializer(new_category)
         return Response(serializer.data)
 
+    id_param = openapi.Parameter('id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[id_param])
+    def delete(self, request, *args, **kwargs):
+        Category.objects.filter(id = request.query_params["id"]).delete()
+        return Response("Success!")
+
 class FoodAPIView(generics.GenericAPIView):
     serializer_class = serializers.FoodRequestSerializer
     throttle_scope = "foods_app"
@@ -122,6 +147,11 @@ class FoodAPIView(generics.GenericAPIView):
 
         return Response(response)
 
+    id_param = openapi.Parameter('id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[id_param])
+    def delete(self, request, *args, **kwargs):
+        Food.objects.filter(id = request.query_params["id"]).delete()
+        return Response("Success!")
 
 class ReviewAPIView(generics.GenericAPIView):
     serializer_class = serializers.ReviewRequestSerializer
@@ -139,6 +169,12 @@ class ReviewAPIView(generics.GenericAPIView):
         reviews = Review.objects.all()
         serializer = serializers.ReviewResponseSerializer(reviews, many=True)
         return Response(serializer.data)  
+
+    id_param = openapi.Parameter('id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[id_param])
+    def delete(self, request, *args, **kwargs):
+        Review.objects.filter(id = request.query_params["id"]).delete()
+        return Response("Success!")
 
 class UserFavoriteFoodAPIView(generics.GenericAPIView):
     serializer_class = serializers.UserFavoriteFoodRequestSerializer
@@ -158,6 +194,12 @@ class UserFavoriteFoodAPIView(generics.GenericAPIView):
         serializer = serializers.UserFavoriteFoodResponseSerializer(fav_foods, many=True)
         return Response(serializer.data)  
 
+    id_param = openapi.Parameter('id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[id_param])
+    def delete(self, request, *args, **kwargs):
+        UserFavoriteFood.objects.filter(id = request.query_params["id"]).delete()
+        return Response("Success!")
+
 class IngredientAPIView(generics.GenericAPIView):
     serializer_class = serializers.IngredientSerializer
     throttle_scope = "ingredients_app"
@@ -173,6 +215,12 @@ class IngredientAPIView(generics.GenericAPIView):
         ingredients = Ingredient.objects.all()
         serializer = serializers.IngredientSerializer(ingredients, many=True)
         return Response(serializer.data)  
+
+    id_param = openapi.Parameter('id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(manual_parameters=[id_param])
+    def delete(self, request, *args, **kwargs):
+        Ingredient.objects.filter(id = request.query_params["id"]).delete()
+        return Response("Success!")
 
 class FoodByIngredientAPIView(generics.GenericAPIView):
     ingredient_id_param = openapi.Parameter('ingredient_id', in_=openapi.IN_QUERY,type=openapi.TYPE_STRING)
