@@ -25,7 +25,7 @@ SECRET_KEY = '0k+j97u+@ev3-@$el*jvl0psa%l6^tr)3fq(ne54ud3kegdd$&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.5']
 
 
 # Application definition
@@ -84,15 +84,15 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': 'mobile_final',
+        'NAME': 'mobile',
 
         'USER': 'postgres',
 
-        'PASSWORD': 'Pass#word1',
+        'PASSWORD': 'Mobile@final',
 
-        'HOST': '13.228.21.39',
+        'HOST': '127.0.0.1',
 
-        'PORT': '5432',
+        'PORT': '5434',
 
     }
 }

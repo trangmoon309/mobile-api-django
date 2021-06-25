@@ -1,20 +1,18 @@
 from django.db import models
-import uuid
 
 #User
 class User(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, null=False, editable=False, unique=True)
     full_name = models.CharField(max_length=50)
-    user_name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=20)
     def __str__(self):
-        return self.name
+        return str(self.full_name)
 
 
 #Category
 class Category(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, null=False, editable=False, unique=True)
     name = models.CharField(max_length=50)
     def __str__(self):
         return self.name
@@ -22,7 +20,7 @@ class Category(models.Model):
 
 #Food
 class Food(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, null=False, editable=False, unique=True)
     name = models.CharField(max_length=50)
     clorie = models.IntegerField()
     potion = models.IntegerField()
@@ -36,24 +34,24 @@ class Food(models.Model):
 
 #UserFavoriteFood
 class UserFavoriteFood(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, null=False, editable=False, unique=True)
     user = models.ForeignKey(User, on_delete = models.CASCADE, null=True)
     food = models.ForeignKey(Food, on_delete = models.CASCADE, null=True)
     def __str__(self):
-        return self.name
+        return 'model'
 
 #Review
 class Review(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, null=False, editable=False, unique=True)
     content = models.TextField()
     food = models.ForeignKey(Food, on_delete = models.CASCADE, null=True)
     def __str__(self):
-        return self.name
+        return 'model'
 
 
 #Ingredient
 class Ingredient(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, null=False, editable=False, unique=True)
     name = models.CharField(max_length=50)
     def __str__(self):
         return self.name
@@ -61,9 +59,9 @@ class Ingredient(models.Model):
 
 #FoodIngredient
 class FoodIngredient(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True, null=False, editable=False, unique=True)
     quantity = models.CharField(max_length=50)
     food = models.ForeignKey(Food, on_delete = models.CASCADE, null=True)
     ingredient = models.ForeignKey(Ingredient, on_delete = models.CASCADE, null=True)
     def __str__(self):
-        return self.name
+        return 'model'
