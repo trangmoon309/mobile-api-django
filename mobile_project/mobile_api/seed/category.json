@@ -1,0 +1,26 @@
+[
+  {
+    "model": "mobile_api.category",
+    "pk": 1,
+    "fields": {
+      "image_id": "cake",
+      "name": "Cake"
+    }
+  },
+  {
+    "model": "mobile_api.category",
+    "pk": 2,
+    "fields": {
+      "image_id": "drink",
+      "name": "Drink"
+    }
+  },
+  {
+    "model": "mobile_api.category",
+    "pk": 3,
+    "fields": {
+      "image_id": "food",
+      "name": "Food"
+    }
+  }
+]

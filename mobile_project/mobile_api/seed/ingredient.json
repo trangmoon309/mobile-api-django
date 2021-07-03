@@ -1,0 +1,38 @@
+[
+  {
+    "model": "mobile_api.ingredient",
+    "pk": 1,
+    "fields": {
+      "name": "Beef"
+    }
+  },
+  {
+    "model": "mobile_api.ingredient",
+    "pk": 2,
+    "fields": {
+      "name": "Onion"
+    }
+  },
+  {
+    "model": "mobile_api.ingredient",
+    "pk": 3,
+    "fields": {
+      "name": "Carrot"
+    }
+  },
+  {
+    "model": "mobile_api.ingredient",
+    "pk": 4,
+    "fields": {
+      "name": "Pork"
+    }
+  },
+  {
+    "model": "mobile_api.ingredient",
+    "pk": 5,
+    "fields": {
+      "name": "Coconut"
+    }
+  }
+
+]

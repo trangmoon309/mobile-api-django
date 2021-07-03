@@ -5,6 +5,9 @@ services:
     restart: always
     volumes:
         - ./docker-create-database:/docker-entrypoint-initdb.d
+        - type: bind
+          source: ./postgres-data
+          target: /var/lib/postgresql/data
     environment:
         - POSTGRES_PASSWORD=Mobile@final
         - POSTGRES_DATABASE=mobile

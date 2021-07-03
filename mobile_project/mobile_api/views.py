@@ -66,9 +66,7 @@ class SignUpAPIView(generics.GenericAPIView):
             User.objects.get(email=user_data["email"])
             return HttpResponse("Username has existed!", status=404)
         except ObjectDoesNotExist:
-            id = uuid.uuid4()
-            new_user = User.objects.create(id=id,
-                                           full_name=user_data["full_name"],
+            new_user = User.objects.create(full_name=user_data["full_name"],
                                            email=user_data["email"],
                                            password=user_data["password"])
             new_user.save()
@@ -77,27 +75,26 @@ class SignUpAPIView(generics.GenericAPIView):
 
 
 class LoginAPIView(generics.GenericAPIView):
-    user_name_param = openapi.Parameter('user_name',
-                                        in_=openapi.IN_QUERY,
-                                        type=openapi.TYPE_STRING)
+    email_param = openapi.Parameter('email',
+                                    in_=openapi.IN_QUERY,
+                                    type=openapi.TYPE_STRING)
     password_param = openapi.Parameter('password',
                                        in_=openapi.IN_QUERY,
                                        type=openapi.TYPE_STRING)
-    throttle_scope = "users_app"
+    #  throttle_scope = "users_app"
 
-    @swagger_auto_schema(manual_parameters=[user_name_param, password_param])
+    @swagger_auto_schema(manual_parameters=[email_param, password_param])
     def post(self, request, *args, **kwargs):
 
-        user_name = request.query_params["user_name"]
+        email = request.query_params["email"]
         password = request.query_params["password"]
         try:
-            user = User.objects.get(user_name=user_name)
+            user = User.objects.get(email=email)
 
             if user.password == password:
                 serializer = serializers.UserSerializer(user)
                 return Response(serializer.data)
-            else:
-                return HttpResponse('Password incorrect.', status=404)
+            return HttpResponse('Password incorrect.', status=404)
         except ObjectDoesNotExist:
             return HttpResponse("User doesn't exist", status=404)
 
@@ -105,6 +102,12 @@ class LoginAPIView(generics.GenericAPIView):
 class CategoryAPIView(generics.GenericAPIView):
     serializer_class = serializers.CategorySerializer
     throttle_scope = "categories_app"
+
+    @swagger_auto_schema(operation_description='Get all categories')
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        serializer = serializers.CategorySerializer(categories, many=True)
+        return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         category_data = request.data
@@ -268,6 +271,7 @@ class IngredientAPIView(generics.GenericAPIView):
         serializer = serializers.IngredientSerializer(new_ingredient)
         return Response(serializer.data)
 
+    @swagger_auto_schema(operation_description='Get all ingredients')
     def get(self, request):
         ingredients = Ingredient.objects.all()
         serializer = serializers.IngredientSerializer(ingredients, many=True)

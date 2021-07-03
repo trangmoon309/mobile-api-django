@@ -5,10 +5,9 @@ from .models import User, Food, UserFavoriteFood, Ingredient, FoodIngredient, Re
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(max_length=50)
     email = serializers.CharField(max_length=50)
-    password = serializers.CharField(max_length=20)
     class Meta:
         model = User
-        fields = ('id','full_name', 'email', 'password')
+        fields = ('id','full_name', 'email')
 
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.CharField(max_length=50)

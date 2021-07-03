@@ -13,7 +13,8 @@ class User(models.Model):
 #Category
 class Category(models.Model):
     id = models.AutoField(primary_key=True, null=False, editable=False, unique=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, null=False, default='')
+    image_id = models.CharField(max_length=255, null=False, default='')
     def __str__(self):
         return self.name
 

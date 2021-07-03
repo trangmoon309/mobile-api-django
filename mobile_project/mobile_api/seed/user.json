@@ -1,0 +1,11 @@
+[
+  {
+    "model": "mobile_api.user",
+    "pk": 1,
+    "fields": {
+      "full_name": "Khai Tran",
+      "email": "leoalan5577@gmail.com",
+      "password": "123"
+    }
+  }
+]
