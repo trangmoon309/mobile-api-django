@@ -1,0 +1,5 @@
+djangorestframework
+pylint_django
+django-cors-headers
+drf_yasg
+psycopg2
