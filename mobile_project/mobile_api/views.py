@@ -1,14 +1,15 @@
-import uuid
-
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.http.response import FileResponse
 
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework.parsers import FileUploadParser, FormParser, MultiPartParser
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from mobile_api.forms import ImageForm
 from .models import User, Ingredient, Category
 from . import serializers
 
@@ -67,3 +68,17 @@ class IngredientAPIView(generics.GenericAPIView):
         ingredients = Ingredient.objects.all()
         serializer = serializers.IngredientSerializer(ingredients, many=True)
         return Response(serializer.data)
+
+
+class UploadImageAPIView(generics.GenericAPIView):
+    serializer_class = serializers.ImageSerializer
+    parser_classes = (FormParser, MultiPartParser)
+
+    def post(self, request):
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            image = form.instance
+            print(image.image.url)
+            return FileResponse()
+        return Response()

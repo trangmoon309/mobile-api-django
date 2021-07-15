@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Category, Ingredient
+from .models import Image, User, Category, Ingredient
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,4 +25,9 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
+        fields = ('__all__')
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
         fields = ('__all__')

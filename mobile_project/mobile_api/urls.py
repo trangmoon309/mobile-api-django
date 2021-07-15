@@ -23,11 +23,11 @@ SchemaView = get_schema_view(
 )
 
 urlpatterns = [
-    path('users', views.UserAPIView.as_view()),
     path('users/sign-up', views.SignUpAPIView.as_view()),
     path('users/log-in', views.LoginAPIView.as_view()),
     path('categories', views.CategoryAPIView.as_view()),
     path('ingredients/', views.IngredientAPIView.as_view()),
+    path('upload/image', views.UploadImageAPIView.as_view()),
     path('doc',
          SchemaView.with_ui('swagger', cache_timeout=0),
          name='schema-swagger-ui'),
