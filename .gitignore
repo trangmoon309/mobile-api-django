@@ -153,4 +153,4 @@ cython_debug/
 #
 postgres-data
 
-mobile-project/images
+mobile_project/images
