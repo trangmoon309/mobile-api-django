@@ -75,7 +75,9 @@ class UploadImageAPIView(generics.GenericAPIView):
     parser_classes = (FormParser, MultiPartParser)
 
     def post(self, request):
+        print(request.FILES)
         form = ImageForm(request.POST, request.FILES)
+        print(form)
         if form.is_valid():
             form.save()
             image = form.instance

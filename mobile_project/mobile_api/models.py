@@ -108,7 +108,6 @@ class Image(models.Model):
                           editable=False,
                           unique=True)
     image = models.ImageField(upload_to=photo_path)
-    name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name
+        return "ok"
