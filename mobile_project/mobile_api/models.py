@@ -29,6 +29,17 @@ class Category(models.Model):
         return self.name
 
 
+class Image(models.Model):
+    id = models.AutoField(primary_key=True,
+                          null=False,
+                          editable=False,
+                          unique=True)
+    image = models.ImageField(upload_to=photo_path)
+
+    def __str__(self):
+        return "ok"
+
+
 #Food
 class Food(models.Model):
     id = models.AutoField(primary_key=True,
@@ -36,13 +47,14 @@ class Food(models.Model):
                           editable=False,
                           unique=True)
     name = models.CharField(max_length=50)
-    clorie = models.IntegerField()
-    potion = models.IntegerField()
-    level = models.IntegerField()
-    star_level = models.IntegerField()
+    clorie = models.IntegerField(null=True)
+    potion = models.IntegerField(null=True)
+    level = models.IntegerField(null=True)
+    star_level = models.IntegerField(null=True)
     prepare = models.TextField()
-    youtube_url = models.CharField(max_length=500)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
+    youtube_url = models.CharField(max_length=500, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    cover_image = models.ForeignKey(Image, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -100,14 +112,3 @@ class FoodIngredient(models.Model):
 
     def __str__(self):
         return 'model'
-
-
-class Image(models.Model):
-    id = models.AutoField(primary_key=True,
-                          null=False,
-                          editable=False,
-                          unique=True)
-    image = models.ImageField(upload_to=photo_path)
-
-    def __str__(self):
-        return "ok"

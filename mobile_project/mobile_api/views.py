@@ -1,17 +1,17 @@
-from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 from django.http.response import FileResponse
-
-from rest_framework.response import Response
-from rest_framework import generics
-from rest_framework.parsers import FileUploadParser, FormParser, MultiPartParser
-
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics
+from rest_framework.parsers import (FileUploadParser, FormParser,
+                                    MultiPartParser)
+from rest_framework.response import Response
 
 from mobile_api.forms import ImageForm
-from .models import User, Ingredient, Category
+
 from . import serializers
+from .models import Category, Food, FoodIngredient, Ingredient, User
 
 
 class SignUpAPIView(generics.GenericAPIView):
@@ -81,6 +81,38 @@ class UploadImageAPIView(generics.GenericAPIView):
         if form.is_valid():
             form.save()
             image = form.instance
-            print(image.image.url)
-            return FileResponse()
-        return Response()
+            serializer = serializers.ImageSerializer(image)
+            return Response(serializer.data)
+        return Response(status=400)
+
+
+class FoodAPIView(generics.GenericAPIView):
+    @swagger_auto_schema(request_body=serializers.FoodSerializer)
+    def post(self, request):
+        food_data = request.data
+
+        category = Category.objects.get(id=food_data['category_id'])
+
+        new_food = Food.objects.create(
+            name=food_data['name'],
+            clorie='clorie' in food_data and food_data['clorie'] or None,
+            potion='potion' in food_data and food_data['potion'] or None,
+            level='level' in food_data and food_data["level"] or None,
+            star_level='start_level' in food_data and food_data["star_level"]
+            or None,
+            prepare=food_data["prepare"],
+            youtube_url='youtube_url' in food_data and food_data["youtube_url"]
+            or None,
+            category=category)
+
+        detail_ingredients = food_data['detail_ingredients']
+        for detail_ingredient in detail_ingredients:
+            ingredient = Ingredient.objects.get(
+                id=detail_ingredient['ingredient_id'])
+
+            FoodIngredient.objects.create(
+                food=new_food,
+                ingredient=ingredient,
+                quantity=detail_ingredient['quantity'])
+
+        return Response("Create sucessfully")
