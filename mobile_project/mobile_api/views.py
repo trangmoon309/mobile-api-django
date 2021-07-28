@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from mobile_api.forms import ImageForm
 
 from . import serializers
-from .models import Category, Food, FoodIngredient, Ingredient, User
+from .models import Category, Food, FoodIngredient, Image, Ingredient, User
 
 
 class SignUpAPIView(generics.GenericAPIView):
@@ -92,6 +92,8 @@ class FoodAPIView(generics.GenericAPIView):
         food_data = request.data
 
         category = Category.objects.get(id=food_data['category_id'])
+        cover_image = Image.objects.get(id=food_data['cover_image_id'])
+        
 
         new_food = Food.objects.create(
             name=food_data['name'],
@@ -103,6 +105,7 @@ class FoodAPIView(generics.GenericAPIView):
             prepare=food_data["prepare"],
             youtube_url='youtube_url' in food_data and food_data["youtube_url"]
             or None,
+            cover_image=cover_image,
             category=category)
 
         detail_ingredients = food_data['detail_ingredients']
