@@ -37,7 +37,7 @@ class Image(models.Model):
     image = models.ImageField(upload_to=photo_path)
 
     def __str__(self):
-        return "ok"
+        return str(self.image.url)
 
 
 #Food

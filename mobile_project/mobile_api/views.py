@@ -70,20 +70,28 @@ class IngredientAPIView(generics.GenericAPIView):
         return Response(serializer.data)
 
 
-class UploadImageAPIView(generics.GenericAPIView):
+class ImageAPIView(generics.GenericAPIView):
     serializer_class = serializers.ImageSerializer
     parser_classes = (FormParser, MultiPartParser)
 
     def post(self, request):
-        print(request.FILES)
         form = ImageForm(request.POST, request.FILES)
-        print(form)
         if form.is_valid():
             form.save()
             image = form.instance
             serializer = serializers.ImageSerializer(image)
             return Response(serializer.data)
         return Response(status=400)
+
+    id_param = openapi.Parameter('id',
+                                    in_=openapi.IN_QUERY,
+                                    type=openapi.TYPE_STRING)
+
+    @swagger_auto_schema(manual_parameters=[id_param])
+    def get(self, request):
+        image_instance = Image.objects.get(id=request.query_params['id'])
+        img = open(image_instance.image.url, 'rb')
+        return HttpResponse(img, content_type="image/jpeg")
 
 
 class FoodAPIView(generics.GenericAPIView):
@@ -93,7 +101,6 @@ class FoodAPIView(generics.GenericAPIView):
 
         category = Category.objects.get(id=food_data['category_id'])
         cover_image = Image.objects.get(id=food_data['cover_image_id'])
-        
 
         new_food = Food.objects.create(
             name=food_data['name'],

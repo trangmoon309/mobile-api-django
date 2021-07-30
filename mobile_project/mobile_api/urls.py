@@ -27,7 +27,7 @@ urlpatterns = [
     path('users/log-in', views.LoginAPIView.as_view()),
     path('categories', views.CategoryAPIView.as_view()),
     path('ingredients/', views.IngredientAPIView.as_view()),
-    path('image', views.UploadImageAPIView.as_view()),
+    path('image', views.ImageAPIView.as_view()),
     path('food', views.FoodAPIView.as_view()),
     path('doc',
          SchemaView.with_ui('swagger', cache_timeout=0),
