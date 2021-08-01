@@ -87,12 +87,6 @@ class ImageAPIView(generics.GenericAPIView):
                                     in_=openapi.IN_QUERY,
                                     type=openapi.TYPE_STRING)
 
-    @swagger_auto_schema(manual_parameters=[id_param])
-    def get(self, request):
-        image_instance = Image.objects.get(id=request.query_params['id'])
-        img = open(image_instance.image.url, 'rb')
-        return HttpResponse(img, content_type="image/jpeg")
-
 
 class FoodAPIView(generics.GenericAPIView):
     @swagger_auto_schema(request_body=serializers.FoodSerializer)
@@ -107,7 +101,7 @@ class FoodAPIView(generics.GenericAPIView):
             clorie='clorie' in food_data and food_data['clorie'] or None,
             potion='potion' in food_data and food_data['potion'] or None,
             level='level' in food_data and food_data["level"] or None,
-            star_level='start_level' in food_data and food_data["star_level"]
+            star_level='star_level' in food_data and food_data["star_level"]
             or None,
             prepare=food_data["prepare"],
             youtube_url='youtube_url' in food_data and food_data["youtube_url"]
@@ -126,3 +120,12 @@ class FoodAPIView(generics.GenericAPIView):
                 quantity=detail_ingredient['quantity'])
 
         return Response("Create sucessfully")
+
+    def get(self, request):
+        #TODO: search by id
+        #TODO: search by category id
+        #TODO: search by ingredient
+        foods = Food.objects.all()
+
+        serializer = serializers.FoodHomeSerializer(foods, many=True)
+        return Response(serializer.data)

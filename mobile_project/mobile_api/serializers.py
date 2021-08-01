@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.relations import SlugRelatedField
 
 from .models import Food, Image, User, Category, Ingredient
 
@@ -47,3 +48,11 @@ class FoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Food
         exclude = ['category', 'cover_image']
+
+class FoodHomeSerializer(serializers.ModelSerializer):
+    cover_image = SlugRelatedField(read_only=True, slug_field='id')
+
+    class Meta:
+        model = Food
+        fields = ('id', 'name', 'cover_image', 'star_level')
+
